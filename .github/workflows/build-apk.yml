@@ -17,6 +17,7 @@ jobs:
         run: |
           if [ -f RangMausam-src.zip ]; then unzip -o -q RangMausam-src.zip; fi
           ls -la . app
+          grep -c "class RagaWidget" app/src/main/java/com/rangmausam/Widgets.kt
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -27,12 +28,17 @@ jobs:
       - name: Build debug APK
         run: |
           gradle --no-daemon assembleDebug
-          cp app/build/outputs/apk/debug/app-debug.apk RangMausam.apk
-      - name: Publish to the "latest" release
+          cp app/build/outputs/apk/debug/app-debug.apk RangMausam-1.1-build${{ github.run_number }}.apk
+      - name: Keep the APK with this run
+        uses: actions/upload-artifact@v4
+        with:
+          name: RangMausam-build${{ github.run_number }}
+          path: RangMausam-1.1-build${{ github.run_number }}.apk
+      - name: Publish a new release for this build
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: Rang Mausam (latest build)
-          body: Open this page on your phone and tap RangMausam.apk to install.
-          files: RangMausam.apk
+          tag_name: build-${{ github.run_number }}
+          name: Rang Mausam build ${{ github.run_number }}
+          body: Open this page on your phone and tap the .apk file to install.
+          files: RangMausam-1.1-build${{ github.run_number }}.apk
           make_latest: true
