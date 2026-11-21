@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Unpack project
+        run: |
+          if [ -f RangMausam-src.zip ]; then unzip -o -q RangMausam-src.zip; fi
+          ls -la . app
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
